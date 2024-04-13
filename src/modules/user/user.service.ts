@@ -23,7 +23,7 @@ export class UserService {
     const user = await User.findOne({ where: { email } });
 
     if (!bcrypt.compareSync(password, user.password)) {
-      throw new MeshError('Invalid email or password');
+      throw new MeshError('Invalid email or password', 403);
     }
 
     return { accessToken: generateAccessToken(user), refreshToken: generateRefreshToken(user) };
@@ -32,7 +32,7 @@ export class UserService {
   async refreshToken(token: string) {
     const { email, nickname, id, isAccessToken } = verifyToken(token);
 
-    if (isAccessToken) throw new Error('Its not refresh token');
+    if (isAccessToken) throw new MeshError('Its not refresh token', 403);
 
     const user = { email, nickname, id, isAccessToken };
 
